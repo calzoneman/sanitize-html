@@ -320,4 +320,19 @@ describe('sanitizeHtml', function() {
       }), '<a data-b.c="#test">click me</a>'
     );
   });
+  it('should preserve comments if allowComments is true', function() {
+    assert.equal(
+      sanitizeHtml('<!-- This is a <script>comment</script> -->', {
+        allowComments: true
+      }),
+      '<!-- This is a <script>comment</script> -->'
+    );
+  });
+  it('should remove comments if allowComments is false (default)', function() {
+    assert.equal(
+      sanitizeHtml('<!-- This is a <script>comment</script> -->', {
+      }),
+      ''
+    );
+  });
 });

@@ -81,6 +81,18 @@ allowedAttributes: {
 }
 ```
 
+### Comments
+
+You can set the `allowComments` option to `true` to preserve comments:
+
+```javascript
+clean = sanitizeHTML('<!-- this is a comment -->', {
+  allowComments: true
+});
+```
+
+This option is set to `false` by default (comments will be removed).
+
 ### Transformations
 
 What if you want to add or change an attribute? What if you want to transform one tag to another? No problem, it's simple!

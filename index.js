@@ -148,7 +148,7 @@ function sanitizeHtml(html, options, _recursing) {
             if (value.length) {
               // Values are ALREADY escaped, calling escapeHtml here
               // results in double escapes.
-              // However, a bug in the HTML parser allows you to use malformed 
+              // However, a bug in the HTML parser allows you to use malformed
               // markup to slip unescaped quotes through, so we strip them explicitly.
               // @see https://github.com/punkave/sanitize-html/issues/19
               result += '="' + value.replace(/"/g, '&quot;') + '"';
@@ -175,6 +175,14 @@ function sanitizeHtml(html, options, _recursing) {
            var frame = stack[stack.length - 1];
            frame.text += text;
       }
+    },
+    oncomment: function(text) {
+      if (!options.allowComments) {
+        return;
+      }
+
+      text = '<!--' + text + '-->';
+      result += text;
     },
     onclosetag: function(name) {
       var frame = stack.pop();
@@ -283,7 +291,8 @@ sanitizeHtml.defaults = {
   // Lots of these won't come up by default because we don't allow them
   selfClosing: [ 'img', 'br', 'hr', 'area', 'base', 'basefont', 'input', 'link', 'meta' ],
   // URL schemes we permit
-  allowedSchemes: [ 'http', 'https', 'ftp', 'mailto' ]
+  allowedSchemes: [ 'http', 'https', 'ftp', 'mailto' ],
+  allowComments: false
 };
 
 sanitizeHtml.simpleTransform = function(newTagName, newAttribs, merge) {
