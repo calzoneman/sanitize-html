@@ -28,9 +28,6 @@ describe('sanitizeHtml', function() {
   it('should accept a custom list of allowed attributes per element', function() {
     assert.equal(sanitizeHtml('<a href="foo.html" whizbang="whangle">foo</a>', { allowedAttributes: { a: [ 'href', 'whizbang' ] } } ), '<a href="foo.html" whizbang="whangle">foo</a>');
   });
-  it('should clean up unclosed img tags and p tags', function() {
-    assert.equal(sanitizeHtml('<img src="foo.jpg"><p>Whee<p>Again<p>Wow<b>cool</b>', { allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ])}), '<img src="foo.jpg" /><p>Whee</p><p>Again</p><p>Wow<b>cool</b></p>');
-  });
   it('should reject hrefs that are not relative, ftp, http, https or mailto', function() {
     assert.equal(sanitizeHtml('<a href="http://google.com">google</a><a href="https://google.com">https google</a><a href="ftp://example.com">ftp</a><a href="mailto:test@test.com">mailto</a><a href="/relative.html">relative</a><a href="javascript:alert(0)">javascript</a>'), '<a href="http://google.com">google</a><a href="https://google.com">https google</a><a href="ftp://example.com">ftp</a><a href="mailto:test@test.com">mailto</a><a href="/relative.html">relative</a><a>javascript</a>');
   });
@@ -295,7 +292,7 @@ describe('sanitizeHtml', function() {
     assert.equal(
       sanitizeHtml('<<a href="javascript:evil"/>a href="javascript:evil"/>'
       ),
-      '<<a>a href="javascript:evil"/></a>'
+      '<<a>a href="javascript:evil"/>'
     );
   });
   it('should allow attributes to be specified as globs', function() {
@@ -333,6 +330,32 @@ describe('sanitizeHtml', function() {
       sanitizeHtml('<!-- This is a <script>comment</script> -->', {
       }),
       ''
+    );
+  });
+  it('should not break Xaekai\'s filters', function() {
+    assert.equal(
+      sanitizeHtml('<span>', {
+        allowedTags: ['span']
+      }),
+      '<span>'
+    );
+    assert.equal(
+      sanitizeHtml('<span><b></span>', {
+        allowedTags: ['span', 'b']
+      }),
+      '<span><b></span>'
+    );
+    assert.equal(
+      sanitizeHtml('<span><b></b>', {
+        allowedTags: ['span', 'b']
+      }),
+      '<span><b></b>'
+    );
+    assert.equal(
+      sanitizeHtml('<span><b></b></span>', {
+        allowedTags: ['span', 'b']
+      }),
+      '<span><b></b></span>'
     );
   });
 });

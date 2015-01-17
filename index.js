@@ -185,6 +185,7 @@ function sanitizeHtml(html, options, _recursing) {
       result += text;
     },
     onclosetag: function(name) {
+      var oldName = name;
       var frame = stack.pop();
       if (!frame) {
         // Do not crash on bad markup
@@ -215,6 +216,12 @@ function sanitizeHtml(html, options, _recursing) {
          return;
       }
 
+      // Incoming hax for chat filters
+      // YOLO
+      var idx = html.indexOf("</" + oldName);
+      if (idx === -1) {
+        return;
+      }
       result += "</" + name + ">";
     }
   });
